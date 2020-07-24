@@ -6,13 +6,15 @@ import pandas as pd
 
 def scraper(num_apart):
     options = webdriver.ChromeOptions()
-    driver = webdriver.Chrome(executable_path="C:/Users/Lassi/Downloads/chromedriver_win32/chromedriver", options=options)
+
+    #change the executable_path to corresponding path in your machine
+    driver = webdriver.Chrome(executable_path="C:/../../chromedriver_win32/chromedriver", options=options)
     driver.set_window_size(1120, 1000)
 
     url = 'https://www.etuovi.com/myytavat-asunnot/jyvaskyla?haku=M1520346994'
 
     driver.get(url)
-    asunnot = []
+    apartments = []
 
     time.sleep(4)
 
@@ -21,46 +23,46 @@ def scraper(num_apart):
     except ElementClickInterceptedException:
         pass
 
-    while len(asunnot) < num_apart:
+    while len(apartments) < num_apart:
 
 
-        for asunto_kortti in driver.find_elements_by_class_name('ListPage__cardContainer__39dKQ'):
+        for apartment_card in driver.find_elements_by_class_name('ListPage__cardContainer__39dKQ'):
             try:
-                asunnon_tyyppi = asunto_kortti.find_element_by_xpath('.//div/div/div[2]/div[1]/div[1]/div/h5').text
+                apart_type = apartment_card.find_element_by_xpath('.//div/div/div[2]/div[1]/div[1]/div/h5').text
             except:
-                asunnon_tyyppi = -1
+                apart_type = -1
             try:
-                sijainti = asunto_kortti.find_element_by_xpath('.//div/div/div[2]/div[1]/div[1]/div/h4').text
+                location = apartment_card.find_element_by_xpath('.//div/div/div[2]/div[1]/div[1]/div/h4').text
             except:
-                sijainti = -1
+                location = -1
             try:
-                hinta = asunto_kortti.find_element_by_xpath('.//div/div/div[2]/div[1]/div[2]/div/div[1]/span').text
+                price = apartment_card.find_element_by_xpath('.//div/div/div[2]/div[1]/div[2]/div/div[1]/span').text
             except:
-                hinta = -1
+                price = -1
             try:
-                koko = asunto_kortti.find_element_by_xpath('.//div/div/div[2]/div[1]/div[2]/div/div[2]/span').text
+                size = apartment_card.find_element_by_xpath('.//div/div/div[2]/div[1]/div[2]/div/div[2]/span').text
             except:
-                koko = -1
+                size = -1
             try:
-                rak_vuosi = asunto_kortti.find_element_by_xpath('.//div/div/div[2]/div[1]/div[2]/div/div[3]/span').text
+                constr_year = apartment_card.find_element_by_xpath('.//div/div/div[2]/div[1]/div[2]/div/div[3]/span').text
             except:
                 rak_vuosi = -1
-            print(f"{asunnon_tyyppi} {sijainti}")
-            print(len(asunnot))
+            print(f"{apart_type} {location}")
+            print(len(apartments))
 
-            asunnot.append({"Asunnon tyyppi" : asunnon_tyyppi,
-                            "Sijanti" : sijainti,
-                            "Hinta" : hinta,
-                            "Koko" : koko,
-                            "Rakennus vuosi" : rak_vuosi})
+            apartments.append({"Asunnon tyyppi" : apart_type,
+                            "Sijanti" : location,
+                            "Hinta" : price,
+                            "Koko" : size,
+                            "Rakennus vuosi" : constr_year})
         try:
             driver.find_element_by_xpath('//*[@id="paginationNext"]').click()
             time.sleep(4)
         except NoSuchElementException:
             print(
-                "Scraping terminated before reaching target number of jobs. Needed {}, got {}.".format(num_apart, len(asunnot)))
+                "Scraping terminated before reaching target number of jobs. Needed {}, got {}.".format(num_apart, len(apartments)))
             break
-    return pd.DataFrame(asunnot)
+    return pd.DataFrame(apartments)
 
 df = scraper(1900)
 df.to_csv('etuovi_asunnot.csv', index=False)
