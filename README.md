@@ -7,7 +7,7 @@ feed it to some machine learning model(?).
 [This site](http://kannattaakokauppa.fi/) got me pumped!
 
 TODO:
-[ ] clean the data entirely
-[ ] form it to reasonable groups e.g. Areas of Jyväskylä?
-[ ] Some ML model ?
-[ ] Charts maybe ? 
+- [ ] clean the data entirely
+- [ ] form it to reasonable groups e.g. Areas of Jyväskylä?
+- [ ] Some ML model ?
+- [ ] Charts maybe ? 
